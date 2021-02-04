@@ -2,6 +2,7 @@
 @using System.ComponentModel.DataAnnotations
 @inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
+@inject IHttpService HttpService
 
 <div class="col-md-6 offset-md-3 mt-5">
     <div class="alert alert-info">
@@ -15,8 +16,8 @@
                 <DataAnnotationsValidator />
                 <div class="form-group">
                     <label>Username</label>
-                    <InputText @bind-Value="model.Username" class="form-control" />
-                    <ValidationMessage For="@(() => model.Username)" />
+                    <InputText @bind-Value="model.UserName" class="form-control" />
+                    <ValidationMessage For="@(() => model.UserName)" />
                 </div>
                 <div class="form-group">
                     <label>Password</label>
@@ -38,7 +39,7 @@
 </div>
 
 @code {
-    private Model model = new Model();
+    private LoginModel model = new LoginModel();
     private bool loading;
     private string error;
 
@@ -56,7 +57,8 @@
         loading = true;
         try
         {
-            await AuthenticationService.Login(model.Username, model.Password);
+            //await AuthenticationService.Login(model.UserName, model.Password);
+            await HttpService.Login(model.UserName, model.Password);
             var returnUrl = NavigationManager.QueryString("returnUrl") ?? "";
             NavigationManager.NavigateTo(returnUrl);
         }
@@ -68,12 +70,4 @@
         }
     }
 
-    private class Model
-    {
-        [Required]
-        public string Username { get; set; }
-
-        [Required]
-        public string Password { get; set; }
-    }
 }
