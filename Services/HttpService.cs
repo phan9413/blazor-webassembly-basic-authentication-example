@@ -54,7 +54,6 @@ namespace BlazorApp.Services
                 _httpClient.DefaultRequestHeaders.Add(StaticValues.APP_CORS, "*");
                 HttpResponseMessage response = await _httpClient.PostAsync(uri, stringContent);
                 */
-
                 var requestMessage = new HttpRequestMessage()
                 {
                     Method = new HttpMethod("POST"),
@@ -66,15 +65,14 @@ namespace BlazorApp.Services
                         Password = password
                     })
                 };
-                requestMessage.Headers.Add(StaticValues.APP_CORS, "*");
-
+                //requestMessage.Headers.Add(StaticValues.APP_CORS, "*");
                 HttpResponseMessage response = await _httpClient.SendAsync(requestMessage);
                 bool success = response.IsSuccessStatusCode;
                 if (!success) return;
 
                 string bearer = await response.Content.ReadAsStringAsync();
                 await _localStorageService.SetItem(StaticValues.BEARER, bearer);
-                Console.WriteLine(bearer);
+                Console.WriteLine("Login");
                 /*
                 requestMessage = new HttpRequestMessage()
                 {
@@ -91,8 +89,9 @@ namespace BlazorApp.Services
                 UserLogin usr = Newtonsoft.Json.JsonConvert.DeserializeObject<UserLogin>(content);
                 usr.Bearer = bearer;
                 */
-                UserLogin usr = await Get<UserLogin>("api/systemusers/" + username);
-                await _localStorageService.SetItem("user", usr);
+                User usr = await Get<User>("api/systemusers/" + username);
+                usr.AuthData = $"{username}:{password}".EncodeBase64();
+                await _localStorageService.SetItem(StaticValues.USERLS, usr);
                 Console.WriteLine(usr.UserName);
             }
             catch (Exception ex)
@@ -103,19 +102,13 @@ namespace BlazorApp.Services
 
         public async Task<T> Get<T>(string uri)
         {
-            string bearer = await _localStorageService.GetItem<string>(StaticValues.BEARER);
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
-            request.Headers.Add(StaticValues.APP_CORS, "*");
-            request.Headers.Add(StaticValues.Authorization, StaticValues.BEARER + " " + bearer);
             return await sendRequest<T>(request);
         }
 
         public async Task<T> Post<T>(string uri, object value)
         {
-            string bearer = await _localStorageService.GetItem<string>(StaticValues.BEARER);
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Headers.Add(StaticValues.APP_CORS, "*");
-            request.Headers.Add(StaticValues.Authorization, StaticValues.BEARER + " " + bearer);
             request.Content = new StringContent(JsonSerializer.Serialize(value), Encoding.UTF8, "application/json");
             return await sendRequest<T>(request);
         }
@@ -124,8 +117,12 @@ namespace BlazorApp.Services
 
         private async Task<T> sendRequest<T>(HttpRequestMessage request)
         {
+            string bearer = await _localStorageService.GetItem<string>(StaticValues.BEARER);
+            request.Headers.Add(StaticValues.Authorization, StaticValues.BEARER + " " + bearer);
+            //request.Headers.Add(StaticValues.APP_CORS, "*");
+
             // add basic auth header if user is logged in and request is to the api url
-            var user = await _localStorageService.GetItem<User>("user");
+            var user = await _localStorageService.GetItem<User>(StaticValues.USERLS);
             var isApiUrl = !request.RequestUri.IsAbsoluteUri;
             if (user != null && isApiUrl)
                 request.Headers.Authorization = new AuthenticationHeaderValue("Basic", user.AuthData);

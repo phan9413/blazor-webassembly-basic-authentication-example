@@ -13,7 +13,7 @@ namespace BlazorApp.Helpers
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var users = new[] { new { Id = 1, Username = "test", Password = "test", FirstName = "Test", LastName = "User" } };
+            var users = new[] { new { Id = 1, Username = "test", Password = "test" } };
             var path = request.RequestUri.AbsolutePath;
             var method = request.Method;
 
@@ -45,8 +45,6 @@ namespace BlazorApp.Helpers
                 return await ok(new {
                     Id = user.Id,
                     Username = user.Username,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
                 });
             }
 

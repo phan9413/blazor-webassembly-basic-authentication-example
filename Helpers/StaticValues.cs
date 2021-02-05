@@ -7,6 +7,7 @@ namespace BlazorApp.Helpers
 {
     public class StaticValues
     {
+        public const string USERLS = "User";
         public const string Content_Type = "Content-Type";
         public const string APP_JSON = "application/json";
         public const string APP_CORS = "Access-Control-Allow-Origin";

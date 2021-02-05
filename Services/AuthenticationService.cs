@@ -33,20 +33,21 @@ namespace BlazorApp.Services
 
         public async Task Initialize()
         {
-            User = await _localStorageService.GetItem<User>("user");
+            User = await _localStorageService.GetItem<User>(StaticValues.USERLS);
         }
 
         public async Task Login(string username, string password)
         {
             User = await _httpService.Post<User>("/login", new { username, password });
             User.AuthData = $"{username}:{password}".EncodeBase64();
-            await _localStorageService.SetItem("user", User);
+            await _localStorageService.SetItem(StaticValues.USERLS, User);
         }
 
         public async Task Logout()
         {
             User = null;
-            await _localStorageService.RemoveItem("user");
+            await _localStorageService.RemoveItem(StaticValues.BEARER);
+            await _localStorageService.RemoveItem(StaticValues.USERLS);
             _navigationManager.NavigateTo("login");
         }
     }

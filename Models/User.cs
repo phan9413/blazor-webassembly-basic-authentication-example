@@ -1,13 +1,13 @@
 namespace BlazorApp.Models
 {
-    public class User
-    {
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Username { get; set; }
-        public string AuthData { get; set; }
-    }
+    //public class User
+    //{
+    //    public int Id { get; set; }
+    //    public string FirstName { get; set; }
+    //    public string LastName { get; set; }
+    //    public string Username { get; set; }
+    //    public string AuthData { get; set; }
+    //}
     public class LoginModel
     {
         [System.ComponentModel.DataAnnotations.Required]
@@ -17,13 +17,13 @@ namespace BlazorApp.Models
         public string Password { get; set; }
     }
 
-    public class UserLogin
+    public class User
     {
         public string UserName { get; set; }
         public string Password { get; set; }
         public Company Company { get; set; }
         public Employee Employee { get; set; }
-
+        public string AuthData { get; set; }
     }
     public class Company
     {
