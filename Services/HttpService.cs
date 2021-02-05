@@ -72,7 +72,7 @@ namespace BlazorApp.Services
 
                 string bearer = await response.Content.ReadAsStringAsync();
                 await _localStorageService.SetItem(StaticValues.BEARER, bearer);
-                Console.WriteLine("Login");
+                Console.WriteLine("Logined");
                 /*
                 requestMessage = new HttpRequestMessage()
                 {

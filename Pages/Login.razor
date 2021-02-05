@@ -3,7 +3,7 @@
 @inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
 @inject IHttpService HttpService
-
+@inject ILocalStorageService LocalStorageService
 <div class="col-md-6 offset-md-3 mt-5">
     <div class="alert alert-info">
         Username: test<br />
@@ -59,6 +59,7 @@
         {
             //await AuthenticationService.Login(model.UserName, model.Password);
             await HttpService.Login(model.UserName, model.Password);
+            await AuthenticationService.Initialize();
             var returnUrl = NavigationManager.QueryString("returnUrl") ?? "";
             NavigationManager.NavigateTo(returnUrl);
         }
